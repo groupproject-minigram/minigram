@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 const {hash} = require('../helpers/bcrypt')
 
 let userSchema = new Schema({
-    name : String,
+    username : String,
     email : {
         type : String,
         validate : [{
