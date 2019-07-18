@@ -1,54 +1,52 @@
-const User = require('../models/user')
-const Helper = require('../helpers/helper')
+const User= require('../models/user')
+const {generateToken}= require('../helpers/jwt')
+const {compare}= require('../helpers/bcrypt')
 
-class UserController {
-    static signup(req, res, next) {
-        let option = {
-            username: req.body.username,
-            password: req.body.password,
-            email: req.body.email
-        }
-        User.create(option)
-            .then((data) => {
-                res.status(201).json(data)
+class userController{
+
+    static register(req, res, next){
+            let newUser= new User({
+                username: req.body.username,
+                email: req.body.email,
+                password: req.body.password
+            })
+            
+            newUser.save()
+            .then(user=>{
+                res.status(201).json(user)
             })
             .catch(next)
-    }
-
-    static signin(req, res, next) {
-        User.findOne({
-                email: req.body.email
-            })
-            .then(user => {
-                if (user) {
-                    if (Helper.comparePassword(req.body.password, user.password)) {
-                        let payload = {
+        }
+    
+    static login(req, res, next){
+            console.log('masuk login')
+            User.findOne({email: req.body.email})
+            .then(user=>{
+                console.log(user)
+                if(user){
+                    if(compare(req.body.password, user.password)){
+                        let payload= {
                             id: user._id,
-                            username: user.username,
-                            email: user.email
+                            email: user.email,
+                            username: user.username
                         }
-                        let genToken = Helper.generateJWT(payload)
+    
+                        let token= generateToken(payload)
+    
                         res.status(200).json({
-                            token: genToken
+                            token,
+                            userId: user._id,
+                            username: user.username
                         })
-                    } else {
-                        next({
-                            code: 404,
-                            message: 'invalid username/password'
-                        })
+                    }else{
+                        throw {code: 404, message: 'Wrong Email/Password'}
                     }
-                } else {
-                    next({
-                        code: 404,
-                        message: 'invalid username/password'
-                    })
+                }else{
+                    throw {code: 404, message: 'Wrong Email/Password'}
                 }
             })
             .catch(next)
-    }
-
-
+        }
 }
 
-
-module.exports = UserController
+module.exports= userController
