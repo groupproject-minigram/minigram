@@ -37,18 +37,18 @@
                     <form action="/action_page.php">
                         <div class="form-group">
                             <label for="caption">Caption</label>
-                            <input type="text" class="form-control" id="caption">
+                            <input v-model="newPost.caption" type="text" class="form-control" id="caption">
                         </div>
                         <div class="form-group">
                             <label for="img">Uplad Your Image below : </label>                          
-                            <input type="file" id="img">
+                            <input @change="setImage" type="file" id="img">
                         </div>                    
-                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
                     
                     <!-- Modal footer -->
                     <div class="modal-footer">
+                    <button @click="addPost" type="submit" class="btn btn-primary">Submit</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
                     
@@ -78,25 +78,87 @@ export default {
     },
     data(){
         return {
-           allPost : [] 
+           allPost : [],
+           myposts:[],
+           newPost:{
+               image:'',
+               caption:''
+           }
         }
     },
     methods : {
+        setImage(){
+            this.image= event.target.files[0]
+        },
         fetchAllPost(){
             axios({
-                method : "post",
-                url : `/`,
+                method : "get",
+                url : `/posts`,
                 headers : {
                     "token" : localStorage.token
                 }
             })
             .then(({data}) => {
-                this.allPost.push(data)
+                console
+                this.allPost= data
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        addPost(){
+            let formData = new FormData()
+            formData.append('caption', this.newPost.image)
+            formData.append('image', this.newPost.image)
+
+            axios({
+                method: "post",
+                url: `/posts`,
+                data: formData,
+                headers:{
+                    'token': localStorage.token
+                }
+            })
+                .then(({data})=>{
+                    console.log(data)
+                    Swal.fire(
+                        'Your article have been posted!',
+                        'Posted!',
+                        'success'
+                    )
+
+                    this.fetchAllPost()
+                    
+                })
+                .catch(function(err){
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Oops...',
+                        text: 'Check your input!',
+                    })
+                        console.log('masuk error publish')
+                        console.log(err)
+                })
+
+        },
+        fetchMyPost(){
+            axios({
+                method : "get",
+                url : `/posts/mypost`,
+                headers : {
+                    "token" : localStorage.token
+                }
+            })
+            .then(({data}) => {
+                console
+                this.myposts= data
             })
             .catch(err => {
                 console.log(err)
             })
         }
+
+
     }
 }
 </script>
