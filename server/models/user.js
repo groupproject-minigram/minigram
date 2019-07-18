@@ -3,7 +3,27 @@ const Schema = mongoose.Schema
 const {hash} = require('../helpers/bcrypt')
 
 let userSchema = new Schema({
-    name : String,
+    username : {
+        type: String,
+        required: [true, 'Username required'],
+        validate:[{
+            validator: function checkUnique(){
+                return new Promise((resolve, reject) =>{
+                User.findOne({username: this.username})
+                    .then(user =>{
+                        if(user) {
+                            resolve(false)
+                        } else {
+                            resolve(true)
+                        }
+                    })
+                    .catch(err =>{
+                        resolve (false)
+                    })
+                })
+            }, message:  props => `Username ${props.value} has been used`
+        }]
+    },
     email : {
         type : String,
         validate : [{
@@ -42,6 +62,6 @@ userSchema.pre('save',function(next){
     next()
 })
 
-let User = mongoose.model('user',userSchema)
+let User = mongoose.model('User',userSchema)
 
 module.exports = User
