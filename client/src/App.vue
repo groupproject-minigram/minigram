@@ -17,7 +17,7 @@ export default {
     },
     data(){
         return {
-            page: 'landing'
+            page: 'home'
         }
     },
     methods:{
