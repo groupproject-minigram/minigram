@@ -20,6 +20,14 @@ class postController{
         .catch(next)
     }
 
+    static findOne(req, res, next){
+        Post.findById(req.params.id)
+        .then(post =>{
+            res.status(200).json(post)
+        })
+        .catch(next)
+    }
+
     static create(req, res, next){
         let newPost= {
             image: req.file.cloudStoragePublicUrl,
@@ -36,23 +44,27 @@ class postController{
     }
 
     static updatelike(req, res, next){
+        console.log('ini masuk like')
         let postId= req.params.postId
         let userId= req.decode.id
 
         Post.findById(postId)
         .then(post =>{
+            console.log('masuk then like')
             if(!post){
+                console.log('masuk ga ada post')
                 throw {code: 404, message: 'Question not found'}
             }else{
+                console.log('masuk else post')
                 if(post.likes.includes(userId)){
-                   return Post.findByIdAndUpdate(postId , {$pull : { likes: userId }})
+                   return Post.findByIdAndUpdate(postId , {$pull : { likes: userId }}, {new: true})
                 }else{
-                   return Post.findByIdAndUpdate(postId, {$addToSet : { likes: userId }})
+                   return Post.findByIdAndUpdate(postId, {$addToSet : { likes: userId }}, {new: true})
                 }
             }
         })
         .then(post =>{
-
+            console.log('berhasil update like');
             res.status(200).json(post)
         })
         .catch(next)

@@ -164,8 +164,8 @@ export default {
 
                 this.$nextTick(() => {
                 this.$refs.modal.hide()
-        })
-
+                })
+            
             })
             .catch(function(err){
                 console.log('masuk error')
