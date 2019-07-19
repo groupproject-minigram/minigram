@@ -50,7 +50,7 @@ export default {
             })
             .then(({data}) => {
                 console.log(data)
-                this.getOnePost()
+                this.getOnePost(data._id)
             })
             .catch(err =>{
                 console.log('error update like')
@@ -60,8 +60,12 @@ export default {
             })
         },
         checklike(){
-            if(this.post.likes.includes(localStorage.userId)){
+            let userId= localStorage.userId
+            if(this.post.likes.includes(userId)){
                 this.statuslike='ok'
+            }
+            else {
+                this.statuslike = 'no'
             }
         },
         changeUrl(){
@@ -71,7 +75,7 @@ export default {
         },
         getOnePost(id){
             axios({
-                url: `posts/one/${id}`,
+                url: `/posts/one/${id}`,
                 method: 'get',
                 headers:{
                     'token': localStorage.token
@@ -89,6 +93,7 @@ export default {
     },
     mounted(){
         this.changeUrl()
+        this.checklike()
     }
 
 }

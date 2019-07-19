@@ -1,16 +1,14 @@
 <template>
     <div id="landing" v-if="page== 'landing'">
       <div id="image"><b-img src="https://i.pinimg.com/originals/a0/c7/c8/a0c7c89aa08d5a04ed5c81d724399411.jpg" fluid alt="Responsive image"></b-img></div>
-      <b-row id="buttons" style="width : 100%">
+      <b-row id="buttons" style="width : 100%; margin-left : 17px;">
         <b-col cols="9">
-        <h1>Welcome to MiniGram</h1>
-        </b-col>
-        <div class="buttons2">
-        <b-col cols="9">
-          <b-button v-b-modal.modal-register size="lg">Register</b-button>      
+        <h1 style="color : white;">Welcome to MiniGram</h1>
+        </b-col>        
+        <b-col cols="9" style="margin-left : 90px;">
+          <b-button v-b-modal.modal-register size="lg" style="margin-right : 10px;">Register</b-button>      
           <b-button v-b-modal.modal-login size="lg">Login</b-button>
-        </b-col>
-        </div>
+        </b-col>        
       </b-row>      
     <div>
     
@@ -171,9 +169,7 @@ export default {
                 
                 this.toHome()
 
-                this.$nextTick(() => {
-                this.$refs.modal.hide()
-                })
+               
             
             })
             .catch(function(err){

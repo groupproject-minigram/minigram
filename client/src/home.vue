@@ -20,13 +20,23 @@
             </b-collapse>
         </b-navbar>     
     </div>
-      <b-container fluid class="bv-example-row">
-      <b-row>
-        <b-col v-if="body === 'feeds'" md="6" offset-md="3"><cardImage></cardImage></b-col>
-      </b-row>
-      <b-row>
-        <b-col v-if="body === 'myImage'" md="4"><myImages><myImages></b-col>
-      </b-row>
+      <b-container fluid class="bv-example-row" style="margin-top: 1%;">
+      <div v-for="data in allPost" :key="data._id">
+        <b-row v-if="body === 'feeds'" style="min-height: 650px;">
+          <b-col md="6" offset-md="3"><cardImage :post="data"></cardImage></b-col>
+        </b-row>
+      </div>
+      <div v-for="mypost in myposts" :key="mypost._id">
+        <b-row v-if="body === 'myImage'" style="min-height: 650px;">
+          <b-col md="6" offset-md="3"><myImages :myImage="mypost" @removeImage="remove"></myImages></b-col>
+        </b-row>
+      </div>
+      <div>
+        <!-- <b-row v-if="body === 'myImage'">
+          <b-col md="4"><myImages><myImages></b-col>
+        </b-row> -->
+      </div>
+      </b-container>
 
     <!-- modal upload file -->
     <div>
@@ -45,15 +55,14 @@
           >
             <b-form-input
               id="name-input"
-              v-model="caption"
+              v-model="newPost.caption"
               required
             ></b-form-input>
           </b-form-group>
           
       <!-- upload file -->
       <div>      
-        <b-form-file v-model="newPost.image" class="mb-2"></b-form-file>
-        <b-button @click="file = null">Reset Image</b-button>
+        <b-form-file v-model="newPost.image" class="mb-2"></b-form-file>        
       </div>
         </form>
       </b-modal>
@@ -91,6 +100,7 @@ export default {
     methods : {
         changePage(val){
           this.body = val
+          
         },
         toLanding(){
           this.$emit('changePage', 'landing')
@@ -151,6 +161,7 @@ export default {
 
         },
         fetchMyPost(){
+          console.log('masuk fetch all my post')
             axios({
                 method : "get",
                 url : `/posts/mypost`,
@@ -159,7 +170,7 @@ export default {
                 }
             })
             .then(({data}) => {
-                console
+                
                 this.myposts= data
             })
             .catch(err => {
@@ -179,10 +190,26 @@ export default {
             bvModalEvt.preventDefault()
             // Trigger submit handler
             this.addPost()
-        }
+        },
+        remove(id){
+        axios({
+          url : `/posts/${id}`,
+          method : "delete",
+          headers : { 'token' : localStorage.token }
+        })
+        .then(({data}) => {
+          console.log(data)
+          this.fetchMyPost()
+          this.fetchAllPost()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      }
     },
-    created(){
+    mounted(){
         this.fetchAllPost()
+        this.fetchMyPost()
     }
 }
 </script>
