@@ -18,7 +18,7 @@
                 <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
                 </b-nav-form>              
             </b-navbar-nav>            
-            <b-button>Logout</b-button>
+            <b-button @click="logout">Logout</b-button>
             </b-collapse>
         </b-navbar>       
     </div>
@@ -46,6 +46,9 @@ export default {
         }
     },
     methods : {
+        toLanding(){
+            this.$emit('changePage', 'landing')
+        },
         setImage(){
             this.image= event.target.files[0]
         },
@@ -115,6 +118,10 @@ export default {
             .catch(err => {
                 console.log(err)
             })
+        },
+        logout(){
+            localStorage.clear()
+            this.toLanding()
         }
 
 
