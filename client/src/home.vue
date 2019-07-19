@@ -2,91 +2,98 @@
     <div v-if="page == 'home'">
          <div>
         <b-navbar toggleable="lg" type="dark" variant="info">
-            <b-navbar-brand>MiniGram</b-navbar-brand>
+            <b-navbar-brand @click="body = 'feeds'" style="cursor : pointer">MiniGram</b-navbar-brand>
 
             <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
             <b-collapse id="nav-collapse" is-nav>
             <b-navbar-nav>
                 <b-nav-item v-b-modal.modal-prevent-closing>add new photo</b-nav-item>
+                <b-nav-item @click="body = 'myImage'">My Images</b-nav-item>
                 <!-- <b-button v-b-modal.modal-prevent-closing>Open Modal</b-button> -->
             </b-navbar-nav>
 
             <!-- Right aligned nav items -->
-            <b-navbar-nav class="ml-auto">
-                <b-nav-form>
-                <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-                <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-                </b-nav-form>              
+            <b-navbar-nav class="ml-auto">                        
+              <b-button @click="logout">Logout</b-button>
             </b-navbar-nav>            
-            <b-button @click="logout">Logout</b-button>
             </b-collapse>
         </b-navbar>     
     </div>
-      <b-container v-for="data in allPost" :key="data._id" fluid class="bv-example-row">
-        <div >
-            <b-row >
-                <b-col md="6" offset-md="3"><cardImage :post="data"></cardImage></b-col>
-            </b-row>
-        </div>
-    
+      <b-container fluid class="bv-example-row">
+      <b-row>
+        <b-col v-if="body === 'feeds'" md="6" offset-md="3"><cardImage></cardImage></b-col>
+      </b-row>
+      <b-row>
+        <b-col v-if="body === 'myImage'" md="4"><myImages><myImages></b-col>
+      </b-row>
 
     <!-- modal upload file -->
-    <div>    
-
-    <b-modal
-      id="modal-prevent-closing"
-      ref="modal"
-      title="Post New Photo"
-      @show="resetModal"
-      @hidden="resetModal"
-      @ok="handleOk"
-    >
-      <form ref="form" @submit.stop.prevent="addPost">
-        <b-form-group
-          label="Caption"
-          label-for="caption-input"
-        >
-          <b-form-input
-            id="name-input"
-            v-model="newPost.caption"
-          ></b-form-input>
-        </b-form-group>
+    <div>
+      <b-modal
+        id="modal-prevent-closing"
+        ref="modal"
+        title="Submit Your Name"
+        @show="resetModal"
+        @hidden="resetModal"
+        @ok="handleOk"
+      >
+        <form ref="form" @submit.stop.prevent="handleSubmit">
+          <b-form-group
+            label="Caption"
+            label-for="caption-input"
+          >
+            <b-form-input
+              id="name-input"
+              v-model="caption"
+              required
+            ></b-form-input>
+          </b-form-group>
+          
       <!-- upload file -->
       <div>      
         <b-form-file v-model="newPost.image" class="mb-2"></b-form-file>
         <b-button @click="file = null">Reset Image</b-button>
       </div>
-      </form>
-    </b-modal>
-  </div>    
+        </form>
+      </b-modal>
     </div>    
+  </div>    
 </template>
 
 <script>
 import cardImage from './cardpost.vue'
+import myImages from './cardMyimages.vue'
 import axios from './api/api'
 
 export default {
     name:'home',
     props:['page'],
     components : {
-      cardImage
+      cardImage,
+      myImages
     },
     data(){
         return {
-           allPost : [],
-           myposts:[],
-           newPost:{
-               image:'',
-               caption:''
-           },
-          file : null
+          body : 'feeds',
+          allPost : [],
+          myposts:[],
+          newPost:{
+              image:'',
+              caption:''
+          },
+          caption: '',
+          nameState: null,
+          submittedNames: [],
+           file : null
         }
     },
     methods : {
+        changePage(val){
+          this.body = val
+        },
         toLanding(){
-            this.$emit('changePage', 'landing')
+          this.$emit('changePage', 'landing')
         },
         fetchAllPost(){
             console.log('masuk fetch all post')
