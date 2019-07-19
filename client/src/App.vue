@@ -1,28 +1,35 @@
 <template>
     <div>
-        <landing :page="page"></landing>
-        <home :page="page" ></home>
+        <landing :page="page" @changePage="changePage"></landing>
+        <home :page="page"  @changePage="changePage" ></home>
     </div>
 </template>
 
 <script>
 import landing from './landing.vue'
 import home from './home.vue'
+import modalBootsrap from './modal.vue'
 
 export default {
     name:'app',
     components:{
         landing,
-        home
+        home,
+        modalBootsrap
     },
     data(){
         return {
-            page: 'home'
+            page: 'landing'
         }
     },
     methods:{
         changePage(value){
             this.page= value
+        }
+    },
+    created(){
+        if(localStorage.token){
+            this.page= 'home'
         }
     }
 }
