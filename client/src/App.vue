@@ -30,7 +30,7 @@ export default {
     created(){
         if(localStorage.token){
             this.page= 'home'
-        }else
+        }
     }
 }
 </script>

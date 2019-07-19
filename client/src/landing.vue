@@ -1,9 +1,18 @@
 <template>
     <div id="landing" v-if="page== 'landing'">
-        <b-button v-b-modal.modal-register>Register</b-button>
-        <b-button v-b-modal.modal-login>Login</b-button>
-
-         <div>
+      <div id="image"><b-img src="https://i.pinimg.com/originals/a0/c7/c8/a0c7c89aa08d5a04ed5c81d724399411.jpg" fluid alt="Responsive image"></b-img></div>
+      <b-row id="buttons" style="width : 100%">
+        <b-col cols="9">
+        <h1>Welcome to MiniGram</h1>
+        </b-col>
+        <div class="buttons2">
+        <b-col cols="9">
+          <b-button v-b-modal.modal-register size="lg">Register</b-button>      
+          <b-button v-b-modal.modal-login size="lg">Login</b-button>
+        </b-col>
+        </div>
+      </b-row>      
+    <div>
     
 
     <!-- <div class="mt-3">
@@ -196,8 +205,20 @@ export default {
         },
     }
 }
+
 </script>
-
 <style>
-
+  #image {
+    position: fixed;
+    z-index: 1;
+    filter: brightness(0.68) blur(1px);
+  }
+  #buttons {
+    margin-top: 25vh;;
+    position: fixed;
+    z-index: 2;
+  }
+  #buttons2 {
+    margin-left: 20px;
+  }
 </style>
