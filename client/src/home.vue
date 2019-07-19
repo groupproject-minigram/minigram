@@ -8,7 +8,8 @@
 
             <b-collapse id="nav-collapse" is-nav>
             <b-navbar-nav>
-                <b-nav-item>add new photo</b-nav-item>
+                <b-nav-item v-b-modal.modal-prevent-closing>add new photo</b-nav-item>
+                <!-- <b-button v-b-modal.modal-prevent-closing>Open Modal</b-button> -->
             </b-navbar-nav>
 
             <!-- Right aligned nav items -->
@@ -20,9 +21,45 @@
             </b-navbar-nav>            
             <b-button>Logout</b-button>
             </b-collapse>
-        </b-navbar>       
+        </b-navbar>     
     </div>
-    </div>
+      <b-container fluid class="bv-example-row">
+      <b-row>
+        <b-col md="6" offset-md="3"><cardImage></cardImage></b-col>
+      </b-row>
+    
+
+    <!-- modal upload file -->
+    <div>    
+
+    <b-modal
+      id="modal-prevent-closing"
+      ref="modal"
+      title="Submit Your Name"
+      @show="resetModal"
+      @hidden="resetModal"
+      @ok="handleOk"
+    >
+      <form ref="form" @submit.stop.prevent="handleSubmit">
+        <b-form-group
+          label="Caption"
+          label-for="caption-input"
+        >
+          <b-form-input
+            id="name-input"
+            v-model="caption"
+            required
+          ></b-form-input>
+        </b-form-group>
+      <!-- upload file -->
+      <div>      
+        <b-form-file v-model="file" ref="file-input" class="mb-2"></b-form-file>
+        <b-button @click="file = null">Reset Image</b-button>
+      </div>
+      </form>
+    </b-modal>
+  </div>    
+    </div>    
 </template>
 
 <script>
@@ -33,7 +70,7 @@ export default {
     name:'home',
     props:['page'],
     components : {
-        cardImage
+      cardImage
     },
     data(){
         return {
@@ -42,7 +79,11 @@ export default {
            newPost:{
                image:'',
                caption:''
-           }
+           },
+          caption: '',
+          nameState: null,
+          submittedNames: [],
+           file : null
         }
     },
     methods : {
@@ -115,7 +156,34 @@ export default {
             .catch(err => {
                 console.log(err)
             })
+        },
+      checkFormValidity() {
+      const valid = this.$refs.form.checkValidity()
+      this.nameState = valid ? 'valid' : 'invalid'
+      return valid
+      },
+      resetModal() {
+        this.name = ''
+        this.nameState = null
+      },
+      handleOk(bvModalEvt) {
+        // Prevent modal from closing
+        bvModalEvt.preventDefault()
+        // Trigger submit handler
+        this.handleSubmit()
+      },
+      handleSubmit() {
+        // Exit when the form isn't valid
+        if (!this.checkFormValidity()) {
+          return
         }
+        // Push the name to submitted names
+        this.submittedNames.push(this.name)
+        // Hide the modal manually
+        this.$nextTick(() => {
+          this.$refs.modal.hide()
+        })
+      }
 
 
     }

@@ -17,10 +17,7 @@
     <b-modal
       id="modal-register"
       ref="modal"
-      title="Submit Your Data"
-      @show="resetModal"
-      @hidden="resetModal"
-      @ok="handleOk"
+      title="Submit Your Data"    
     >
 
       <form ref="form" @submit.stop.prevent="handleSubmit">
@@ -32,26 +29,22 @@
         >        
           <b-form-input
             id="user-name-input"
-            v-model="name"
-            :state="nameState"
+            v-model="name"            
             required
           ></b-form-input>
 
-          <b-form-group
-          :state="emailState"
+          <b-form-group          
           label="Email"
           label-for="email-input"
           invalid-feedback="Email is required"
         >
           <b-form-input
             id="email"
-            v-model="registerEmail"
-            :state="emailState"
+            v-model="registerEmail"           
             required
           ></b-form-input>
 
-          <b-form-group
-          :state="password"
+          <b-form-group         
           label="Password"
           label-for="password-input"
           invalid-feedback="password is required"
@@ -59,8 +52,7 @@
           <b-form-input
             id="password"
             type="password"
-            v-model="registerPassword"
-            :state="password"
+            v-model="registerPassword"           
             required
           ></b-form-input>
         </b-form-group>
@@ -70,27 +62,21 @@
     <b-modal
       id="modal-login"
       ref="modal"
-      title="Login With Your Registered Email"
-      @show="resetModal"
-      @hidden="resetModal"
-      @ok="handleOk"
+      title="Login With Your Registered Email"    
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">      
-          <b-form-group
-          :state="emailState"
+          <b-form-group          
           label="Email"
           label-for="email-input"
           invalid-feedback="Email is required"
         >
           <b-form-input
             id="email"
-            v-model="loginEmail"
-            :state="emailState"
+            v-model="loginEmail"            
             required
           ></b-form-input>
 
-          <b-form-group
-          :state="password"
+          <b-form-group          
           label="Password"
           label-for="password-input"
           invalid-feedback="password is required"
@@ -98,8 +84,7 @@
           <b-form-input
             id="password"
             type="password"
-            v-model="loginPassword"
-            :state="password"
+            v-model="loginPassword"            
             required
           ></b-form-input>
         </b-form-group>
