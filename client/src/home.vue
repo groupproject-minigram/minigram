@@ -1,68 +1,133 @@
 <template>
     <div v-if="page == 'home'">
-        <nav class="navbar navbar-expand-lg navbar bg-info">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand" href="#">Hidden brand</a>
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Open modal</button>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>            
-            </ul>
-            <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2 " type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            <button type="button" class="btn btn-secondary">Logout</button>
+         <div>
+        <b-navbar toggleable="lg" type="dark" variant="info">
+            <b-navbar-brand>MiniGram</b-navbar-brand>
 
+            <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-            <!-- The Modal -->
-            <div class="modal" id="myModal">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                
-                <!-- Modal Header -->
-                <div class="modal-header">
-                <h4 class="modal-title">Modal Heading</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                    
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <form action="/action_page.php">
-                        <div class="form-group">
-                            <label for="caption">Caption</label>
-                            <input v-model="newPost.caption" type="text" class="form-control" id="caption">
-                        </div>
-                        <div class="form-group">
-                            <label for="img">Uplad Your Image below : </label>                          
-                            <input @change="setImage" type="file" id="img">
-                        </div>                    
-                    </form>
-                </div>
-                    
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                    <button @click="addPost" type="submit" class="btn btn-primary">Submit</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    </div>
-                    
-                </div>
-                </div>
-            </div>
-        </div>
-        </nav>
+            <b-collapse id="nav-collapse" is-nav>
+            <b-navbar-nav>
+                <b-nav-item>add new photo</b-nav-item>
+            </b-navbar-nav>
 
-        <div class="container">
-            <div v-for="post in allPost" :key="post._id">
-            <cardImage :post="post"></cardImage>          
-            </div>
-        </div>
+            <!-- Right aligned nav items -->
+            <b-navbar-nav class="ml-auto">
+                <b-nav-form>
+                <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
+                <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+                </b-nav-form>              
+            </b-navbar-nav>
+            <b-button v-b-modal.modal-register>Register</b-button>
+            <b-button v-b-modal.modal-login>Login</b-button>
+            <b-button>Logout</b-button>
+            </b-collapse>
+        </b-navbar>
+
+        <div>
+    
+
+    <!-- <div class="mt-3">
+      Submitted Names: -->
+      <!-- <div v-if="submittedNames.length === 0">--</div> -->
+      <!-- <ul v-else class="mb-0 pl-3"> -->
+        <!-- <li v-for="name in submittedNames">{{ name }}</li> -->
+      <!-- </ul> -->
+    <!-- </div> -->
+
+    <b-modal
+      id="modal-register"
+      ref="modal"
+      title="Submit Your Data"
+      @show="resetModal"
+      @hidden="resetModal"
+      @ok="handleOk"
+    >
+
+      <form ref="form" @submit.stop.prevent="handleSubmit">
+        <b-form-group
+          :state="nameState"
+          label="Username"
+          label-for="name-input"
+          invalid-feedback="Name is required"
+        >        
+          <b-form-input
+            id="user-name-input"
+            v-model="name"
+            :state="nameState"
+            required
+          ></b-form-input>
+
+          <b-form-group
+          :state="emailState"
+          label="Email"
+          label-for="email-input"
+          invalid-feedback="Email is required"
+        >
+          <b-form-input
+            id="email"
+            v-model="registerEmail"
+            :state="emailState"
+            required
+          ></b-form-input>
+
+          <b-form-group
+          :state="password"
+          label="Password"
+          label-for="password-input"
+          invalid-feedback="password is required"
+        >
+          <b-form-input
+            id="password"
+            type="password"
+            v-model="registerPassword"
+            :state="password"
+            required
+          ></b-form-input>
+        </b-form-group>
+      </form>
+    </b-modal>
+
+    <b-modal
+      id="modal-login"
+      ref="modal"
+      title="Login With Your Registered Email"
+      @show="resetModal"
+      @hidden="resetModal"
+      @ok="handleOk"
+    >
+      <form ref="form" @submit.stop.prevent="handleSubmit">      
+          <b-form-group
+          :state="emailState"
+          label="Email"
+          label-for="email-input"
+          invalid-feedback="Email is required"
+        >
+          <b-form-input
+            id="email"
+            v-model="loginEmail"
+            :state="emailState"
+            required
+          ></b-form-input>
+
+          <b-form-group
+          :state="password"
+          label="Password"
+          label-for="password-input"
+          invalid-feedback="password is required"
+        >
+          <b-form-input
+            id="password"
+            type="password"
+            v-model="loginPassword"
+            :state="password"
+            required
+          ></b-form-input>
+        </b-form-group>
+      </form>
+    </b-modal>
+  </div>
+    </div>
     </div>
 </template>
 
