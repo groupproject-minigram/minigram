@@ -23,10 +23,12 @@
             </b-collapse>
         </b-navbar>     
     </div>
-      <b-container fluid class="bv-example-row">
-      <b-row>
-        <b-col md="6" offset-md="3"><cardImage></cardImage></b-col>
-      </b-row>
+      <b-container v-for="data in allPost" :key="data._id" fluid class="bv-example-row">
+        <div >
+            <b-row >
+                <b-col md="6" offset-md="3"><cardImage :post="data"></cardImage></b-col>
+            </b-row>
+        </div>
     
 
     <!-- modal upload file -->
@@ -35,25 +37,24 @@
     <b-modal
       id="modal-prevent-closing"
       ref="modal"
-      title="Submit Your Name"
+      title="Post New Photo"
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
     >
-      <form ref="form" @submit.stop.prevent="handleSubmit">
+      <form ref="form" @submit.stop.prevent="addPost">
         <b-form-group
           label="Caption"
           label-for="caption-input"
         >
           <b-form-input
             id="name-input"
-            v-model="caption"
-            required
+            v-model="newPost.caption"
           ></b-form-input>
         </b-form-group>
       <!-- upload file -->
       <div>      
-        <b-form-file v-model="file" ref="file-input" class="mb-2"></b-form-file>
+        <b-form-file v-model="newPost.image" class="mb-2"></b-form-file>
         <b-button @click="file = null">Reset Image</b-button>
       </div>
       </form>
@@ -80,20 +81,15 @@ export default {
                image:'',
                caption:''
            },
-          caption: '',
-          nameState: null,
-          submittedNames: [],
-           file : null
+          file : null
         }
     },
     methods : {
         toLanding(){
             this.$emit('changePage', 'landing')
         },
-        setImage(){
-            this.image= event.target.files[0]
-        },
         fetchAllPost(){
+            console.log('masuk fetch all post')
             axios({
                 method : "get",
                 url : `/posts`,
@@ -102,7 +98,7 @@ export default {
                 }
             })
             .then(({data}) => {
-                console
+                console.log(data)
                 this.allPost= data
             })
             .catch(err => {
@@ -111,7 +107,7 @@ export default {
         },
         addPost(){
             let formData = new FormData()
-            formData.append('caption', this.newPost.image)
+            formData.append('caption', this.newPost.caption)
             formData.append('image', this.newPost.image)
 
             axios({
@@ -131,7 +127,10 @@ export default {
                     )
 
                     this.fetchAllPost()
-                    
+                    this.$nextTick(() => {
+                        this.$refs.modal.hide()
+                    })
+                                    
                 })
                 .catch(function(err){
                     Swal.fire({
@@ -164,35 +163,19 @@ export default {
             localStorage.clear()
             this.toLanding()
         },
-      checkFormValidity() {
-      const valid = this.$refs.form.checkValidity()
-      this.nameState = valid ? 'valid' : 'invalid'
-      return valid
-      },
-      resetModal() {
-        this.name = ''
-        this.nameState = null
-      },
-      handleOk(bvModalEvt) {
-        // Prevent modal from closing
-        bvModalEvt.preventDefault()
-        // Trigger submit handler
-        this.handleSubmit()
-      },
-      handleSubmit() {
-        // Exit when the form isn't valid
-        if (!this.checkFormValidity()) {
-          return
+        resetModal() {
+            this.newPost.image = null
+            this.newPost.caption = null
+        },
+        handleOk(bvModalEvt) {
+            // Prevent modal from closing
+            bvModalEvt.preventDefault()
+            // Trigger submit handler
+            this.addPost()
         }
-        // Push the name to submitted names
-        this.submittedNames.push(this.name)
-        // Hide the modal manually
-        this.$nextTick(() => {
-          this.$refs.modal.hide()
-        })
-      }
-
-
+    },
+    created(){
+        this.fetchAllPost()
     }
 }
 </script>
